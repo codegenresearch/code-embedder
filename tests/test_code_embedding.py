@@ -1,8 +1,1 @@
-python:main.py\", \"print('Hello, World!')\", \"
-\", \"print('Hello, World!')\", \"
-python\", \"print('Hello, World!')\", \"
-python:example.py\",\n                \"import os\",\n                \"print('Hello, World!')\",\n                \"
-\",\n                \"print('Do not replace')\",\n                \"
-python:main.py\",\n                \"print('Hello, World!')\",\n                \"
-python:example.py\",\n                \"import os\",\n                \"print('Hello, World!')\",\n                \"
-\",\n                \"print('Do not replace')\",\n                \"
+import pytest\nfrom src.code_embedding import CodeEmbedder, ScriptMetadata, ScriptPathExtractor\n\n\n@pytest.mark.parametrize(\n    \
