@@ -1,6 +1,6 @@
 python:main.py",\n            "print('Hello, World!')",\n            "
-",\n            "print('Hello, World!')",\n            "
-python",\n            "print('Hello, World!')",\n            "
+", "print('Hello, World!')", "
+python", "print('Hello, World!')", "
 python:example.py",\n            "import os",\n            "print('Hello, World!')",\n            "
 ",\n            "print('Do not replace')",\n            "
 python:main.py",\n            "print('Hello, World!')",\n            "
