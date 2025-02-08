@@ -1,13 +1,1 @@
-from src.script_metadata import ScriptMetadata
-
-
-def create_script_metadata(
-    start: int, end: int, path: str, extraction_part: str | None = None, content: str = ""
-) -> ScriptMetadata:
-    return ScriptMetadata(
-        readme_start=start,
-        readme_end=end,
-        path=path,
-        extraction_part=extraction_part,
-        content=content,
-    )
+from src.script_metadata import ScriptMetadata\n\ndef create_script_metadata_entry(\n    start_row: int, end_row: int, script_path: str, extraction_section: str | None = None, script_content: str = ""\n) -> ScriptMetadata:\n    return ScriptMetadata(\n        readme_start=start_row,\n        readme_end=end_row,\n        path=script_path,\n        extraction_part=extraction_section,\n        content=script_content,\n    )
