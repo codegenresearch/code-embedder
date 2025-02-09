@@ -19,7 +19,7 @@ class ScriptMetadataExtractor:
         self._code_block_end = ""
         self._path_separator = ":"
 
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
+    def extract(self, readme_content: List[str]) -> List[ScriptMetadata]:
         scripts = []
         current_block = None
 
@@ -49,8 +49,8 @@ class ScriptMetadataExtractor:
 
 
 class ScriptContentReader:
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        script_contents: list[ScriptMetadata] = []
+    def read(self, scripts: List[ScriptMetadata]) -> List[ScriptMetadata]:
+        script_contents: List[ScriptMetadata] = []
 
         for script in scripts:
             try:
@@ -91,7 +91,7 @@ class ReadmeProcessor:
             readme_path=readme_path,
         )
 
-    def _read_readme(self, readme_path: str) -> list[str]:
+    def _read_readme(self, readme_path: str) -> List[str]:
         if not readme_path.endswith(".md"):
             logger.error("README path must end with .md")
             raise ValueError("README path must end with .md")
@@ -100,8 +100,8 @@ class ReadmeProcessor:
             return readme_file.readlines()
 
     def _extract_scripts(
-        self, readme_content: list[str], readme_path: str
-    ) -> list[ScriptMetadata] | None:
+        self, readme_content: List[str], readme_path: str
+    ) -> Optional[List[ScriptMetadata]]:
         scripts = self._script_metadata_extractor.extract(readme_content=readme_content)
         if not scripts:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
@@ -114,8 +114,8 @@ class ReadmeProcessor:
 
     def _update_readme(
         self,
-        script_contents: list[ScriptMetadata],
-        readme_content: list[str],
+        script_contents: List[ScriptMetadata],
+        readme_content: List[str],
         readme_path: str,
     ) -> None:
         updated_readme = []
@@ -136,7 +136,7 @@ class ReadmeProcessor:
 class CodeEmbedder:
     def __init__(
         self,
-        readme_paths: list[str],
+        readme_paths: List[str],
         script_metadata_extractor: ScriptMetadataExtractor,
         script_content_reader: ScriptContentReader,
     ) -> None:
