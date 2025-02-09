@@ -105,7 +105,7 @@ def test_code_embedder(tmp_path) -> None:
 
     temp_readme_paths = [tmp_path / f"readme{i}.md" for i in range(len(original_paths))]
     for original_path, temp_readme_path in zip(original_paths, temp_readme_paths):
-        with open(original_path, 'r') as readme_file:
+        with open(original_path) as readme_file:
             temp_readme_path.write_text(readme_file.read())
 
     script_metadata_extractor = ScriptMetadataExtractor()
@@ -119,10 +119,10 @@ def test_code_embedder(tmp_path) -> None:
     code_embedder()
 
     for expected_path, temp_readme_path in zip(expected_paths, temp_readme_paths):
-        with open(expected_path, 'r') as expected_file:
+        with open(expected_path) as expected_file:
             expected_readme_content = expected_file.readlines()
 
-        with open(temp_readme_path, 'r') as updated_file:
+        with open(temp_readme_path) as updated_file:
             updated_readme_content = updated_file.readlines()
 
         assert expected_readme_content == updated_readme_content
