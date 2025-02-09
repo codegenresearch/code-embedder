@@ -13,18 +13,13 @@ class ScriptMetadata:
     content: str
 
 
-class ScriptMetadataExtractorInterface:
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
-        raise NotImplementedError
-
-
-class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
+class ScriptMetadataExtractor:
     def __init__(self) -> None:
         self._code_block_start_regex = r"^.*?:"
         self._code_block_end = ""
         self._path_separator = ":"
 
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
+    def extract(self, readme_content: List[str]) -> List[ScriptMetadata]:
         scripts = []
         current_block = None
 
@@ -53,14 +48,9 @@ class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
         )
 
 
-class ScriptContentReaderInterface:
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        raise NotImplementedError
-
-
-class ScriptContentReader(ScriptContentReaderInterface):
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        script_contents: list[ScriptMetadata] = []
+class ScriptContentReader:
+    def read(self, scripts: List[ScriptMetadata]) -> List[ScriptMetadata]:
+        script_contents: List[ScriptMetadata] = []
 
         for script in scripts:
             try:
@@ -78,8 +68,8 @@ class ScriptContentReader(ScriptContentReaderInterface):
 class ReadmeProcessor:
     def __init__(
         self,
-        script_metadata_extractor: ScriptMetadataExtractorInterface,
-        script_content_reader: ScriptContentReaderInterface,
+        script_metadata_extractor: ScriptMetadataExtractor,
+        script_content_reader: ScriptContentReader,
     ) -> None:
         self._script_metadata_extractor = script_metadata_extractor
         self._script_content_reader = script_content_reader
@@ -101,7 +91,7 @@ class ReadmeProcessor:
             readme_path=readme_path,
         )
 
-    def _read_readme(self, readme_path: str) -> list[str]:
+    def _read_readme(self, readme_path: str) -> List[str]:
         if not readme_path.endswith(".md"):
             logger.error("README path must end with .md")
             raise ValueError("README path must end with .md")
@@ -110,8 +100,8 @@ class ReadmeProcessor:
             return readme_file.readlines()
 
     def _extract_scripts(
-        self, readme_content: list[str], readme_path: str
-    ) -> list[ScriptMetadata] | None:
+        self, readme_content: List[str], readme_path: str
+    ) -> List[ScriptMetadata] | None:
         scripts = self._script_metadata_extractor.extract(readme_content=readme_content)
         if not scripts:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
@@ -124,8 +114,8 @@ class ReadmeProcessor:
 
     def _update_readme(
         self,
-        script_contents: list[ScriptMetadata],
-        readme_content: list[str],
+        script_contents: List[ScriptMetadata],
+        readme_content: List[str],
         readme_path: str,
     ) -> None:
         updated_readme = []
@@ -146,9 +136,9 @@ class ReadmeProcessor:
 class CodeEmbedder:
     def __init__(
         self,
-        readme_paths: list[str],
-        script_metadata_extractor: ScriptMetadataExtractorInterface,
-        script_content_reader: ScriptContentReaderInterface,
+        readme_paths: List[str],
+        script_metadata_extractor: ScriptMetadataExtractor,
+        script_content_reader: ScriptContentReader,
     ) -> None:
         self._readme_paths = readme_paths
         self._readme_processor = ReadmeProcessor(script_metadata_extractor, script_content_reader)
