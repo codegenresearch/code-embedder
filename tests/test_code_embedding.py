@@ -74,7 +74,7 @@ def test_code_embedder_read_script_content() -> None:
         script_content_reader=script_content_reader,
     )
 
-    scripts = code_embedder._read_script_content(
+    scripts = code_embedder.read_script_content(
         scripts=[
             ScriptMetadata(
                 readme_start=6, readme_end=7, path="tests/data/example.py", content=""
@@ -120,9 +120,9 @@ def test_code_embedder(tmp_path) -> None:
 
     for expected_path, temp_readme_path in zip(expected_paths, temp_readme_paths):
         with open(expected_path, 'r') as expected_file:
-            expected_content = expected_file.readlines()
+            expected_readme_content = expected_file.readlines()
 
         with open(temp_readme_path, 'r') as updated_file:
-            updated_content = updated_file.readlines()
+            updated_readme_content = updated_file.readlines()
 
-        assert expected_content == updated_content
+        assert expected_readme_content == updated_readme_content
