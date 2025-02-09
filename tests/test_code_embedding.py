@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 
 from src.code_embedding import CodeEmbedder, ScriptMetadata
-from src.script_content_reader import ScriptContentReader
 from src.script_metadata_extractor import ScriptMetadataExtractor
 
 
@@ -90,7 +89,7 @@ def test_code_embedder_read_script_content() -> None:
     ]
 
 
-def test_code_embedder(tmp_path: Path) -> None:
+def test_code_embedder(tmp_path) -> None:
     original_paths = [
         "tests/data/readme0.md",
         "tests/data/readme1.md",
