@@ -1,1 +1,1 @@
-python:main.py", "print('Hello, World!')", "
+import pytest\n\nfrom src.code_embedding import CodeEmbedder, ScriptMetadata, ScriptPathExtractor\n\n\n@pytest.mark.parametrize(\n    \
