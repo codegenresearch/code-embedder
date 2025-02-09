@@ -3,6 +3,7 @@ from pathlib import Path
 
 from src.code_embedding import CodeEmbedder, ScriptMetadata
 from src.script_metadata_extractor import ScriptMetadataExtractor
+from src.script_content_reader import ScriptContentReader
 
 
 def create_script_metadata(readme_start, readme_end, path, content=""):
