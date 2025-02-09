@@ -1,6 +1,8 @@
 import pytest
 
-from src.code_embedding import CodeEmbedder, ScriptMetadata, ScriptPathExtractor
+from src.code_embedding import CodeEmbedder, ScriptMetadata
+from src.script_content_reader import ScriptContentReader
+from src.script_metadata_extractor import ScriptMetadataExtractor
 
 
 def create_script_metadata(readme_start, readme_end, path, content=""):
@@ -58,15 +60,18 @@ test_cases = [
 def test_script_path_extractor(
     readme_content: list[str], expected: list[ScriptMetadata]
 ) -> None:
-    script_path_extractor = ScriptPathExtractor()
-    result = script_path_extractor.extract(readme_content=readme_content)
+    script_metadata_extractor = ScriptMetadataExtractor()
+    result = script_metadata_extractor.extract(readme_content=readme_content)
     assert result == expected
 
 
 def test_code_embedder_read_script_content() -> None:
+    script_metadata_extractor = ScriptMetadataExtractor()
+    script_content_reader = ScriptContentReader()
     code_embedder = CodeEmbedder(
         readme_paths=["tests/data/readme.md"],
-        script_path_extractor=ScriptPathExtractor(),
+        script_metadata_extractor=script_metadata_extractor,
+        script_content_reader=script_content_reader,
     )
 
     scripts = code_embedder._read_script_content(
@@ -100,16 +105,24 @@ def test_code_embedder(tmp_path) -> None:
 
     temp_readme_paths = [tmp_path / f"readme{i}.md" for i in range(len(original_paths))]
     for original_path, temp_readme_path in zip(original_paths, temp_readme_paths):
-        temp_readme_path.write_text(open(original_path).read())
+        with open(original_path, 'r') as readme_file:
+            temp_readme_path.write_text(readme_file.read())
 
+    script_metadata_extractor = ScriptMetadataExtractor()
+    script_content_reader = ScriptContentReader()
     code_embedder = CodeEmbedder(
         readme_paths=[str(p) for p in temp_readme_paths],
-        script_path_extractor=ScriptPathExtractor(),
+        script_metadata_extractor=script_metadata_extractor,
+        script_content_reader=script_content_reader,
     )
 
     code_embedder()
 
     for expected_path, temp_readme_path in zip(expected_paths, temp_readme_paths):
-        expected_content = open(expected_path).readlines()
-        updated_content = open(temp_readme_path).readlines()
+        with open(expected_path, 'r') as expected_file:
+            expected_content = expected_file.readlines()
+
+        with open(temp_readme_path, 'r') as updated_file:
+            updated_content = updated_file.readlines()
+
         assert expected_content == updated_content
