@@ -1,1 +1,1 @@
-import re\nfrom dataclasses import dataclass, field\nfrom typing import List, Optional, Dict\nfrom loguru import logger\n\n@dataclass"class ScriptMetadata:\
+.*?:"\n        self._code_block_end = "
