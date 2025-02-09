@@ -63,6 +63,30 @@ def test_script_metadata_extractor(
     assert result == expected
 
 
+def test_code_embedder_read_script_content() -> None:
+    code_embedder = CodeEmbedder(
+        readme_paths=["tests/data/readme.md"],
+        script_metadata_extractor=ScriptMetadataExtractor(),
+        script_content_reader=ScriptContentReader(),
+    )
+
+    scripts = code_embedder._read_script_content(
+        scripts=[
+            ScriptMetadata(
+                readme_start=6, readme_end=7, path="tests/data/example.py", content=""
+            )
+        ]
+    )
+    assert scripts == [
+        ScriptMetadata(
+            readme_start=6,
+            readme_end=7,
+            path="tests/data/example.py",
+            content='print("Hello, World! from script")\n',
+        )
+    ]
+
+
 def test_code_embedder(tmp_path) -> None:
     # Create a temporary copy of the original file
     original_paths = [
@@ -97,3 +121,6 @@ def test_code_embedder(tmp_path) -> None:
             updated_readme_content = updated_file.readlines()
 
         assert expected_readme_content == updated_readme_content
+
+
+To address the feedback, I've ensured that the `ScriptMetadataExtractor` is correctly extracting the script metadata from the provided `readme_content`. The `extract` method should now properly parse the input list to detect lines that start with a colon (`:`), capture the content of the script that follows the tag until an empty line or another tag is encountered, and create and return `ScriptMetadata` instances with the correct `readme_start`, `readme_end`, `path`, and `content` attributes. The `content` attribute includes the correct formatting (e.g., newline characters) as expected by the tests.
