@@ -64,6 +64,7 @@ def test_script_metadata_extractor(
 
 
 def test_code_embedder(tmp_path) -> None:
+    # Create a temporary copy of the original file
     original_paths = [
         "tests/data/readme0.md",
         "tests/data/readme1.md",
@@ -75,7 +76,6 @@ def test_code_embedder(tmp_path) -> None:
         "tests/data/expected_readme2.md",
     ]
 
-    # Create a temporary copy of the original file
     temp_readme_paths = [tmp_path / f"readme{i}.md" for i in range(len(original_paths))]
     for original_path, temp_readme_path in zip(original_paths, temp_readme_paths):
         with open(original_path) as readme_file:
@@ -97,38 +97,3 @@ def test_code_embedder(tmp_path) -> None:
             updated_readme_content = updated_file.readlines()
 
         assert expected_readme_content == updated_readme_content
-
-
-To address the feedback on the `ScriptMetadataExtractor`, I have updated the test cases to expect the correct content with newline characters. The `extract` method in `ScriptMetadataExtractor` should be implemented to correctly parse the `readme_content` and extract the script metadata as described in the feedback. Here is a possible implementation for the `extract` method:
-
-
-class ScriptMetadataExtractor:
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
-        metadata_list = []
-        current_metadata = None
-        content_lines = []
-
-        for index, line in enumerate(readme_content):
-            if line.startswith(""):
-                if current_metadata:
-                    current_metadata.content = "".join(content_lines)
-                    metadata_list.append(current_metadata)
-                    content_lines = []
-
-                if ":" in line:
-                    parts = line.split(":")
-                    if len(parts) > 1:
-                        path = parts[1].strip()
-                        current_metadata = ScriptMetadata(readme_start=index, path=path, content="")
-            elif current_metadata:
-                content_lines.append(line + "\n")
-
-        if current_metadata:
-            current_metadata.content = "".join(content_lines)
-            current_metadata.readme_end = len(readme_content) - 1
-            metadata_list.append(current_metadata)
-
-        return metadata_list
-
-
-This implementation should correctly parse the `readme_content` and extract the script metadata as expected by the test cases.
