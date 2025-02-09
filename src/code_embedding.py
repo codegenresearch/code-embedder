@@ -132,10 +132,8 @@ class CodeEmbedder:
         updated_readme = []
         readme_content_cursor = 0
 
-        # Sort scripts by their readme_start attribute
-        script_contents.sort(key=lambda script: script.readme_start)
-
-        for script in script_contents:
+        # Process each script in the order they appear in the README
+        for script in sorted(script_contents, key=lambda script: script.readme_start):
             updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
             updated_readme += script.content + "\n"
 
