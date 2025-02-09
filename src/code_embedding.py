@@ -39,7 +39,7 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._read_script_content(scripts=scripts)
+        script_contents = self._script_content_reader.read(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -66,9 +66,6 @@ class CodeEmbedder:
             {set(script.path for script in scripts)}"""
         )
         return scripts
-
-    def _read_script_content(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        return self._script_content_reader.read(scripts=scripts)
 
     def _update_readme(
         self,
