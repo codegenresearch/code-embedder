@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import Protocol, List, Optional
+from typing import Protocol, List
 
 from loguru import logger
 
@@ -13,17 +13,17 @@ class ScriptMetadata:
     content: str
 
 
-class ScriptMetadataExtractor(Protocol):
+class ScriptMetadataExtractorInterface(Protocol):
     def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
         ...
 
 
-class ScriptContentReader(Protocol):
+class ScriptContentReaderInterface(Protocol):
     def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
         ...
 
 
-class DefaultScriptMetadataExtractor:
+class DefaultScriptMetadataExtractor(ScriptMetadataExtractorInterface):
     def __init__(self) -> None:
         self._code_block_start_regex = r"^.*?:"
         self._code_block_end = ""
@@ -58,7 +58,7 @@ class DefaultScriptMetadataExtractor:
         )
 
 
-class DefaultScriptContentReader:
+class DefaultScriptContentReader(ScriptContentReaderInterface):
     def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
         script_contents: list[ScriptMetadata] = []
 
@@ -75,14 +75,20 @@ class DefaultScriptContentReader:
         return script_contents
 
 
-class ReadmeProcessor:
+class CodeEmbedder:
     def __init__(
         self,
-        script_metadata_extractor: ScriptMetadataExtractor,
-        script_content_reader: ScriptContentReader,
+        readme_paths: list[str],
+        script_metadata_extractor: ScriptMetadataExtractorInterface,
+        script_content_reader: ScriptContentReaderInterface,
     ) -> None:
+        self._readme_paths = readme_paths
         self._script_metadata_extractor = script_metadata_extractor
         self._script_content_reader = script_content_reader
+
+    def __call__(self) -> None:
+        for readme_path in self._readme_paths:
+            self._process_readme(readme_path)
 
     def _process_readme(self, readme_path: str) -> None:
         readme_content = self._read_readme(readme_path)
@@ -94,7 +100,7 @@ class ReadmeProcessor:
         if not scripts:
             return
 
-        script_contents = self._script_content_reader.read(scripts=scripts)
+        script_contents = self._read_script_content(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -122,6 +128,9 @@ class ReadmeProcessor:
         )
         return scripts
 
+    def _read_script_content(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
+        return self._script_content_reader.read(scripts=scripts)
+
     def _update_readme(
         self,
         script_contents: list[ScriptMetadata],
@@ -141,18 +150,3 @@ class ReadmeProcessor:
 
         with open(readme_path, "w") as readme_file:
             readme_file.writelines(updated_readme)
-
-
-class CodeEmbedder:
-    def __init__(
-        self,
-        readme_paths: list[str],
-        script_metadata_extractor: ScriptMetadataExtractor,
-        script_content_reader: ScriptContentReader,
-    ) -> None:
-        self._readme_paths = readme_paths
-        self._readme_processor = ReadmeProcessor(script_metadata_extractor, script_content_reader)
-
-    def __call__(self) -> None:
-        for readme_path in self._readme_paths:
-            self._readme_processor._process_readme(readme_path)
