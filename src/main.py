@@ -8,7 +8,7 @@ from src.script_metadata_extractor import ScriptMetadataExtractor
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--readme-paths", nargs="+", type=str, help="Paths to Readme files", default=["README.md"]
+    "--readme-paths", nargs="+", type=str, help="Paths to Readme files", default="README.md"
 )
 args = parser.parse_args()
 
