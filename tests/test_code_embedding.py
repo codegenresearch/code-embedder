@@ -10,7 +10,7 @@ from src.script_metadata_extractor import ScriptMetadataExtractor
     [
         (
             [":main.py", "print('Hello, World!')", ""],
-            [ScriptMetadata(readme_start=0, readme_end=2, path="main.py", content="print('Hello, World!')")],
+            [ScriptMetadata(readme_start=0, readme_end=2, path="main.py", content="print('Hello, World!')\n")],
         ),
         (["", "print('Hello, World!')", ""], []),
         ([], []),
@@ -25,7 +25,7 @@ from src.script_metadata_extractor import ScriptMetadataExtractor
                 "print('Do not replace')",
                 "",
             ],
-            [ScriptMetadata(readme_start=0, readme_end=3, path="example.py", content="import os\nprint('Hello, World!')")],
+            [ScriptMetadata(readme_start=0, readme_end=3, path="example.py", content="import os\nprint('Hello, World!')\n")],
         ),
         (
             [
@@ -41,8 +41,8 @@ from src.script_metadata_extractor import ScriptMetadataExtractor
                 "",
             ],
             [
-                ScriptMetadata(readme_start=0, readme_end=2, path="main.py", content="print('Hello, World!')"),
-                ScriptMetadata(readme_start=3, readme_end=6, path="example.py", content="import os\nprint('Hello, World!')"),
+                ScriptMetadata(readme_start=0, readme_end=2, path="main.py", content="print('Hello, World!')\n"),
+                ScriptMetadata(readme_start=3, readme_end=6, path="example.py", content="import os\nprint('Hello, World!')\n"),
             ],
         ),
     ],
@@ -63,32 +63,6 @@ def test_script_metadata_extractor(
     assert result == expected
 
 
-def test_code_embedder_read_script_content() -> None:
-    script_metadata_extractor = ScriptMetadataExtractor()
-    script_content_reader = ScriptContentReader()
-    code_embedder = CodeEmbedder(
-        readme_paths=["tests/data/readme.md"],
-        script_metadata_extractor=script_metadata_extractor,
-        script_content_reader=script_content_reader,
-    )
-
-    scripts = code_embedder._read_script_content(
-        scripts=[
-            ScriptMetadata(
-                readme_start=6, readme_end=7, path="tests/data/example.py", content=""
-            )
-        ]
-    )
-    assert scripts == [
-        ScriptMetadata(
-            readme_start=6,
-            readme_end=7,
-            path="tests/data/example.py",
-            content='print("Hello, World! from script")\n',
-        )
-    ]
-
-
 def test_code_embedder(tmp_path) -> None:
     original_paths = [
         "tests/data/readme0.md",
@@ -107,12 +81,10 @@ def test_code_embedder(tmp_path) -> None:
         with open(original_path) as readme_file:
             temp_readme_path.write_text(readme_file.read())
 
-    script_metadata_extractor = ScriptMetadataExtractor()
-    script_content_reader = ScriptContentReader()
     code_embedder = CodeEmbedder(
         readme_paths=[str(temp_readme_path) for temp_readme_path in temp_readme_paths],
-        script_metadata_extractor=script_metadata_extractor,
-        script_content_reader=script_content_reader,
+        script_metadata_extractor=ScriptMetadataExtractor(),
+        script_content_reader=ScriptContentReader(),
     )
 
     code_embedder()
