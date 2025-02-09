@@ -1,1 +1,1 @@
-import argparse\nfrom loguru import logger\nfrom src.code_embedding import CodeEmbedder, ScriptMetadataExtractor, ScriptContentReader\n\n\n# Argument parsing\nparser = argparse.ArgumentParser()\nparser.add_argument(\n    "--readme-paths", nargs=\
+import argparse\nfrom loguru import logger\n\nfrom src.code_embedding import CodeEmbedder\nfrom src.script_content_reader import ScriptContentReader\nfrom src.script_metadata_extractor import ScriptMetadataExtractor\n\n\n# Argument parsing\nparser = argparse.ArgumentParser()\nparser.add_argument(\n    "--readme-paths", nargs=\
