@@ -1,13 +1,1 @@
-from src.script_metadata import ScriptMetadata
-
-
-def create_script_metadata(
-    start: int, end: int, path: str, extraction_part: str | None = None, content: str = ""
-) -> ScriptMetadata:
-    return ScriptMetadata(
-        readme_start=start,
-        readme_end=end,
-        path=path,
-        extraction_part=extraction_part,
-        content=content,
-    )
+from src.script_metadata import ScriptMetadata\nfrom src.script_metadata_extractor import ScriptMetadataExtractorInterface\n\nclass ScriptMetadataFactory(ScriptMetadataExtractorInterface):\n    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:\n        return []\n    \\n    def create_script_metadata(\n        self, start: int, end: int, path: str, extraction_part: str | None = None\\) -> ScriptMetadata:\n        return ScriptMetadata(\n            readme_start=start,\n            readme_end=end,\n            path=path,\n            extraction_part=extraction_part,\n            content="",\\)
