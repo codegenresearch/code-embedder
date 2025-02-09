@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Protocol, List, Optional
 
 from loguru import logger
 
@@ -13,13 +13,23 @@ class ScriptMetadata:
     content: str
 
 
-class ScriptMetadataExtractor:
+class ScriptMetadataExtractor(Protocol):
+    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
+        ...
+
+
+class ScriptContentReader(Protocol):
+    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
+        ...
+
+
+class DefaultScriptMetadataExtractor:
     def __init__(self) -> None:
         self._code_block_start_regex = r"^.*?:"
         self._code_block_end = ""
         self._path_separator = ":"
 
-    def extract(self, readme_content: List[str]) -> List[ScriptMetadata]:
+    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
         scripts = []
         current_block = None
 
@@ -48,9 +58,9 @@ class ScriptMetadataExtractor:
         )
 
 
-class ScriptContentReader:
-    def read(self, scripts: List[ScriptMetadata]) -> List[ScriptMetadata]:
-        script_contents: List[ScriptMetadata] = []
+class DefaultScriptContentReader:
+    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
+        script_contents: list[ScriptMetadata] = []
 
         for script in scripts:
             try:
@@ -91,7 +101,7 @@ class ReadmeProcessor:
             readme_path=readme_path,
         )
 
-    def _read_readme(self, readme_path: str) -> List[str]:
+    def _read_readme(self, readme_path: str) -> list[str]:
         if not readme_path.endswith(".md"):
             logger.error("README path must end with .md")
             raise ValueError("README path must end with .md")
@@ -100,8 +110,8 @@ class ReadmeProcessor:
             return readme_file.readlines()
 
     def _extract_scripts(
-        self, readme_content: List[str], readme_path: str
-    ) -> Optional[List[ScriptMetadata]]:
+        self, readme_content: list[str], readme_path: str
+    ) -> list[ScriptMetadata] | None:
         scripts = self._script_metadata_extractor.extract(readme_content=readme_content)
         if not scripts:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
@@ -114,8 +124,8 @@ class ReadmeProcessor:
 
     def _update_readme(
         self,
-        script_contents: List[ScriptMetadata],
-        readme_content: List[str],
+        script_contents: list[ScriptMetadata],
+        readme_content: list[str],
         readme_path: str,
     ) -> None:
         updated_readme = []
@@ -136,7 +146,7 @@ class ReadmeProcessor:
 class CodeEmbedder:
     def __init__(
         self,
-        readme_paths: List[str],
+        readme_paths: list[str],
         script_metadata_extractor: ScriptMetadataExtractor,
         script_content_reader: ScriptContentReader,
     ) -> None:
