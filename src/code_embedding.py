@@ -1,10 +1,11 @@
 import re
 from dataclasses import dataclass
-from typing import Protocol, List
+from typing import List, Protocol
 
 from loguru import logger
 
 
+# script_metadata.py
 @dataclass
 class ScriptMetadata:
     readme_start: int
@@ -13,23 +14,26 @@ class ScriptMetadata:
     content: str
 
 
+# script_metadata_extractor_interface.py
 class ScriptMetadataExtractorInterface(Protocol):
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
+    def extract(self, readme_content: List[str]) -> List[ScriptMetadata]:
         ...
 
 
+# script_content_reader_interface.py
 class ScriptContentReaderInterface(Protocol):
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
+    def read(self, scripts: List[ScriptMetadata]) -> List[ScriptMetadata]:
         ...
 
 
+# default_script_metadata_extractor.py
 class DefaultScriptMetadataExtractor(ScriptMetadataExtractorInterface):
     def __init__(self) -> None:
         self._code_block_start_regex = r"^.*?:"
         self._code_block_end = ""
         self._path_separator = ":"
 
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
+    def extract(self, readme_content: List[str]) -> List[ScriptMetadata]:
         scripts = []
         current_block = None
 
@@ -58,9 +62,10 @@ class DefaultScriptMetadataExtractor(ScriptMetadataExtractorInterface):
         )
 
 
+# default_script_content_reader.py
 class DefaultScriptContentReader(ScriptContentReaderInterface):
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        script_contents: list[ScriptMetadata] = []
+    def read(self, scripts: List[ScriptMetadata]) -> List[ScriptMetadata]:
+        script_contents: List[ScriptMetadata] = []
 
         for script in scripts:
             try:
@@ -75,10 +80,11 @@ class DefaultScriptContentReader(ScriptContentReaderInterface):
         return script_contents
 
 
+# code_embedder.py
 class CodeEmbedder:
     def __init__(
         self,
-        readme_paths: list[str],
+        readme_paths: List[str],
         script_metadata_extractor: ScriptMetadataExtractorInterface,
         script_content_reader: ScriptContentReaderInterface,
     ) -> None:
@@ -100,14 +106,14 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._read_script_content(scripts=scripts)
+        script_contents = self._script_content_reader.read(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
             readme_path=readme_path,
         )
 
-    def _read_readme(self, readme_path: str) -> list[str]:
+    def _read_readme(self, readme_path: str) -> List[str]:
         if not readme_path.endswith(".md"):
             logger.error("README path must end with .md")
             raise ValueError("README path must end with .md")
@@ -116,8 +122,8 @@ class CodeEmbedder:
             return readme_file.readlines()
 
     def _extract_scripts(
-        self, readme_content: list[str], readme_path: str
-    ) -> list[ScriptMetadata] | None:
+        self, readme_content: List[str], readme_path: str
+    ) -> List[ScriptMetadata] | None:
         scripts = self._script_metadata_extractor.extract(readme_content=readme_content)
         if not scripts:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
@@ -128,13 +134,10 @@ class CodeEmbedder:
         )
         return scripts
 
-    def _read_script_content(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        return self._script_content_reader.read(scripts=scripts)
-
     def _update_readme(
         self,
-        script_contents: list[ScriptMetadata],
-        readme_content: list[str],
+        script_contents: List[ScriptMetadata],
+        readme_content: List[str],
         readme_path: str,
     ) -> None:
         updated_readme = []
@@ -150,3 +153,6 @@ class CodeEmbedder:
 
         with open(readme_path, "w") as readme_file:
             readme_file.writelines(updated_readme)
+
+
+This code snippet addresses the feedback by organizing the code into separate modules for better modularity, ensuring consistent method naming, and improving readability and documentation.
