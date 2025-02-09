@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 
 from src.code_embedding import CodeEmbedder, ScriptMetadata
 from src.script_content_reader import ScriptContentReader
@@ -66,12 +67,10 @@ def test_script_path_extractor(
 
 
 def test_code_embedder_read_script_content() -> None:
-    script_metadata_extractor = ScriptMetadataExtractor()
-    script_content_reader = ScriptContentReader()
     code_embedder = CodeEmbedder(
         readme_paths=["tests/data/readme.md"],
-        script_metadata_extractor=script_metadata_extractor,
-        script_content_reader=script_content_reader,
+        script_metadata_extractor=ScriptMetadataExtractor(),
+        script_content_reader=ScriptContentReader(),
     )
 
     scripts = code_embedder.read_script_content(
@@ -91,7 +90,7 @@ def test_code_embedder_read_script_content() -> None:
     ]
 
 
-def test_code_embedder(tmp_path) -> None:
+def test_code_embedder(tmp_path: Path) -> None:
     original_paths = [
         "tests/data/readme0.md",
         "tests/data/readme1.md",
@@ -108,12 +107,10 @@ def test_code_embedder(tmp_path) -> None:
         with open(original_path) as readme_file:
             temp_readme_path.write_text(readme_file.read())
 
-    script_metadata_extractor = ScriptMetadataExtractor()
-    script_content_reader = ScriptContentReader()
     code_embedder = CodeEmbedder(
         readme_paths=[str(p) for p in temp_readme_paths],
-        script_metadata_extractor=script_metadata_extractor,
-        script_content_reader=script_content_reader,
+        script_metadata_extractor=ScriptMetadataExtractor(),
+        script_content_reader=ScriptContentReader(),
     )
 
     code_embedder()
