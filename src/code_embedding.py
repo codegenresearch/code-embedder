@@ -1,7 +1,5 @@
 import re
 from dataclasses import dataclass
-from typing import list, Optional
-
 from loguru import logger
 
 
@@ -95,6 +93,7 @@ class ReadmeProcessor:
             return
 
         script_contents = self._script_content_reader.read(scripts=scripts)
+        script_contents.sort(key=lambda x: x.readme_start)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -130,8 +129,6 @@ class ReadmeProcessor:
     ) -> None:
         updated_readme = []
         readme_content_cursor = 0
-
-        script_contents.sort(key=lambda x: x.readme_start)
 
         for script in script_contents:
             updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
