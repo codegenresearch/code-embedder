@@ -124,5 +124,8 @@ def test_code_embedder(tmp_path) -> None:
 
 
 ### Changes Made:
-1. **ScriptMetadataExtractor**: Updated the test cases to match the expected format of `ScriptMetadata` with correct content.
-2. **CodeEmbedder**: Renamed `_read_script_content` to `read_script_content` to make it a public method, addressing the `AttributeError`.
+1. **Removed `pytest` Import**: Since `pytest` is typically used for test functions and not within the test file itself, it is not necessary to import it unless there are specific pytest functionalities being used outside of the test functions.
+2. **Test Function Naming**: Ensured that the test function names are consistent and descriptive.
+3. **Comment Clarity**: Simplified the comment about creating temporary files for clarity.
+4. **Code Structure**: Ensured that the structure of the code matches the expected format, particularly in how temporary files are created and assertions are made.
+5. **Redundant Code**: Removed any redundant lines or variables to streamline the code.
