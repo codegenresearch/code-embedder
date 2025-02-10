@@ -1,7 +1,5 @@
 import re
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
 from loguru import logger
 
 
@@ -55,7 +53,9 @@ class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
         return {"start": row, "path": path}
 
     def _finish_current_block(self, block: dict, end_row: int) -> ScriptMetadata:
-        return ScriptMetadata(readme_start=block["start"], readme_end=end_row, path=block["path"])
+        return ScriptMetadata(
+            readme_start=block["start"], readme_end=end_row, path=block["path"]
+        )
 
 
 class ScriptContentReader(ScriptContentReaderInterface):
@@ -94,7 +94,7 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._script_content_reader.read(scripts=scripts)
+        script_contents = self._read_script_content(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -117,8 +117,8 @@ class CodeEmbedder:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
             return None
         logger.info(
-            f"""Found script paths in README in path {readme_path}:
-            {set(script.path for script in scripts)}"""
+            f"Found script paths in README in path {readme_path}: "
+            f"{set(script.path for script in scripts)}"
         )
         return scripts
 
