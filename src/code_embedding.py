@@ -1,4 +1,5 @@
 import re
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from loguru import logger
 
@@ -117,8 +118,8 @@ class CodeEmbedder:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
             return None
         logger.info(
-            f"Found script paths in README in path {readme_path}: "
-            f"{set(script.path for script in scripts)}"
+            f"""Found script paths in README in path {readme_path}:
+            {set(script.path for script in scripts)}"""
         )
         return scripts
 
