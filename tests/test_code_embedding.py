@@ -99,7 +99,7 @@ def test_code_embedder(tmp_path) -> None:
         "tests/data/expected_readme2.md",
     ]
 
-    # Create a temporary copy of the original files
+    # Create temporary copies of the original files
     temp_readme_paths = [tmp_path / f"readme{i}.md" for i in range(len(original_paths))]
     for original_path, temp_readme_path in zip(original_paths, temp_readme_paths):
         with open(original_path) as readme_file:
