@@ -70,7 +70,7 @@ def test_code_embedder_read_script_content() -> None:
         script_content_reader=ScriptContentReader(),
     )
 
-    scripts = code_embedder._read_script_content(
+    scripts = code_embedder.read_script_content(
         scripts=[
             ScriptMetadata(
                 readme_start=6, readme_end=7, path="tests/data/example.py", content=""
@@ -121,3 +121,8 @@ def test_code_embedder(tmp_path) -> None:
             updated_readme_content = updated_file.readlines()
 
         assert expected_readme_content == updated_readme_content
+
+
+### Changes Made:
+1. **ScriptMetadataExtractor**: Updated the test cases to match the expected format of `ScriptMetadata` with correct content.
+2. **CodeEmbedder**: Renamed `_read_script_content` to `read_script_content` to make it a public method, addressing the `AttributeError`.
