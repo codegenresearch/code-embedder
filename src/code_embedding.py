@@ -116,7 +116,8 @@ class CodeEmbedder:
             logger.info(f"No script paths found in README in path {readme_path}. Skipping.")
             return None
         logger.info(
-            f"Found script paths in README in path {readme_path}: {set(script.path for script in scripts)}"
+            f"""Found script paths in README in path {readme_path}:
+            {set(script.path for script in scripts)}"""
         )
         return scripts
 
@@ -133,11 +134,11 @@ class CodeEmbedder:
         readme_content_cursor = 0
 
         for script in sorted(script_contents, key=lambda x: x.readme_start):
-            updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
-            updated_readme += script.content + "\n"
+            updated_readme.extend(readme_content[readme_content_cursor : script.readme_start + 1])
+            updated_readme.append(script.content + "\n")
             readme_content_cursor = script.readme_end
 
-        updated_readme += readme_content[readme_content_cursor:]
+        updated_readme.extend(readme_content[readme_content_cursor:])
 
         with open(readme_path, "w") as readme_file:
             readme_file.writelines(updated_readme)
