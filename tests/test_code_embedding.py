@@ -135,6 +135,6 @@ def test_code_embedder(tmp_path) -> None:
 1. **SyntaxError**: Removed any extraneous text or comments that were causing the `SyntaxError`.
 2. **File Handling**: Ensured consistent use of the context manager (`with` statement) for file operations.
 3. **Variable Naming**: Changed `temp_paths` to `temp_readme_paths` for clarity.
-4. **List Comprehension**: Used list comprehension for creating `temp_readme_paths` in a concise manner.
-5. **Code Structure**: Maintained consistent spacing and formatting throughout the code.
-6. **Commenting**: Added comments to explain the purpose of creating temporary copies of files.
+4. **Code Structure**: Maintained consistent formatting and spacing throughout the code.
+5. **Commenting**: Added comments to explain the purpose of creating temporary copies of files.
+6. **List Comprehension**: Used list comprehension for creating `temp_readme_paths` in a concise manner.
