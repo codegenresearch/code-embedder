@@ -94,9 +94,8 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._read_script_content(scripts=scripts)
         self._update_readme(
-            script_contents=script_contents,
+            script_contents=self._read_script_content(scripts=scripts),
             readme_content=readme_content,
             readme_path=readme_path,
         )
