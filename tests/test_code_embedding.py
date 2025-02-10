@@ -130,3 +130,4 @@ def test_code_embedder(tmp_path) -> None:
 4. **Variable Naming**: Ensured variable names are consistent and clear.
 5. **Commenting**: Ensured that comments are formatted correctly and are relevant to the code they describe.
 6. **Code Clarity**: Reviewed the code for clarity and conciseness, ensuring each part contributes to the overall functionality.
+7. **Function Calls**: Ensured that the `code_embedder()` function is called without any parameters unless there is a specific reason for a different approach.
