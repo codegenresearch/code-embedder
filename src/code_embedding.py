@@ -150,5 +150,6 @@ class CodeEmbedder:
 3. **Type Annotations**: Used `list[str]` instead of `List[str]` for type hints to match the style of the gold code.
 4. **Variable Naming**: Ensured that variable names are consistent with the gold code.
 5. **Method Calls**: Ensured that the method calls and their parameters are structured similarly to the gold code.
-6. **Logging Consistency**: Reviewed log messages for consistency in wording and structure.
+6. **Logging Messages**: Reviewed log messages for consistency in wording and structure.
 7. **Code Structure**: Reviewed the overall structure of the class and methods to ensure they follow the same logical flow as the gold code.
+8. **Code Formatting**: Ensured consistent indentation and spacing to match the style of the gold code.
