@@ -60,19 +60,13 @@ class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
 
 class ScriptContentReader(ScriptContentReaderInterface):
     def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        script_contents: list[ScriptMetadata] = []
-
         for script in scripts:
             try:
                 with open(script.path) as script_file:
                     script.content = script_file.read()
-
-                script_contents.append(script)
-
             except FileNotFoundError:
                 logger.error(f"Error: {script.path} not found. Skipping.")
-
-        return script_contents
+        return scripts
 
 
 class CodeEmbedder:
@@ -137,14 +131,12 @@ class CodeEmbedder:
         readme_content: list[str],
         readme_path: str,
     ) -> None:
-        script_contents.sort(key=lambda x: x.readme_start)
         updated_readme = []
         readme_content_cursor = 0
 
-        for script in script_contents:
+        for script in sorted(script_contents, key=lambda x: x.readme_start):
             updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
             updated_readme += script.content + "\n"
-
             readme_content_cursor = script.readme_end
 
         updated_readme += readme_content[readme_content_cursor:]
