@@ -10,7 +10,7 @@ parser.add_argument(
     "--readme-paths", 
     nargs="+", 
     type=str, 
-    help="Paths to README files", 
+    help="Paths to the README files", 
     default="README.md"
 )
 args = parser.parse_args()
