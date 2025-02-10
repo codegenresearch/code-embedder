@@ -94,7 +94,7 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._read_script_content(scripts=scripts)
+        script_contents = self._script_content_reader.read(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -131,11 +131,10 @@ class CodeEmbedder:
         readme_content: list[str],
         readme_path: str,
     ) -> None:
-        script_contents.sort(key=lambda x: x.readme_start)
         updated_readme = []
         readme_content_cursor = 0
 
-        for script in script_contents:
+        for script in sorted(script_contents, key=lambda x: x.readme_start):
             updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
             updated_readme += script.content + "\n"
             readme_content_cursor = script.readme_end
