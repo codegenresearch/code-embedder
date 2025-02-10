@@ -1,4 +1,5 @@
 import re
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from loguru import logger
 
@@ -137,7 +138,7 @@ class CodeEmbedder:
         for script in sorted(script_contents, key=lambda x: x.readme_start):
             updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
             updated_readme += script.content + "\n"
-            readme_content_cursor = script.readme_end
+            readme_content_cursor = script.readme_end + 1
 
         updated_readme += readme_content[readme_content_cursor:]
 
