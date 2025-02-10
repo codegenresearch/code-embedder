@@ -2,8 +2,8 @@ import re
 from dataclasses import dataclass
 
 from loguru import logger
-from src.script_metadata_extractor import ScriptMetadataExtractorInterface
-from src.script_content_reader import ScriptContentReaderInterface
+from src.script_content_reader import ScriptContentReader
+from src.script_metadata_extractor import ScriptMetadataExtractor
 
 
 @dataclass
@@ -14,7 +14,7 @@ class ScriptMetadata:
     content: str
 
 
-class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
+class ScriptMetadataExtractor:
     def __init__(self) -> None:
         self._code_block_start_regex = r"^.*?:"
         self._code_block_end = ""
@@ -49,23 +49,12 @@ class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
         )
 
 
-class ScriptContentReader(ScriptContentReaderInterface):
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        for script in scripts:
-            try:
-                with open(script.path) as script_file:
-                    script.content = script_file.read()
-            except FileNotFoundError:
-                logger.error(f"Error: {script.path} not found. Skipping.")
-        return scripts
-
-
 class CodeEmbedder:
     def __init__(
         self,
         readme_paths: list[str],
-        script_metadata_extractor: ScriptMetadataExtractorInterface,
-        script_content_reader: ScriptContentReaderInterface,
+        script_metadata_extractor: ScriptMetadataExtractor,
+        script_content_reader: ScriptContentReader,
     ) -> None:
         self._readme_paths = readme_paths
         self._script_metadata_extractor = script_metadata_extractor
@@ -85,7 +74,7 @@ class CodeEmbedder:
         if not scripts:
             return
 
-        script_contents = self._read_script_contents(scripts=scripts)
+        script_contents = self._script_content_reader.read(scripts=scripts)
         self._update_readme(
             script_contents=script_contents,
             readme_content=readme_content,
@@ -112,9 +101,6 @@ class CodeEmbedder:
             {set(script.path for script in scripts)}"""
         )
         return scripts
-
-    def _read_script_contents(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        return self._script_content_reader.read(scripts)
 
     def _update_readme(
         self,
