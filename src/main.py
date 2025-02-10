@@ -2,15 +2,15 @@ import argparse
 from loguru import logger
 
 from src.code_embedding import CodeEmbedder
-from src.script_metadata_extractor import ScriptMetadataExtractor
 from src.script_content_reader import ScriptContentReader
+from src.script_metadata_extractor import ScriptMetadataExtractor
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--readme-paths", 
     nargs="+", 
     type=str, 
-    help="Paths to the Readme files", 
+    help="Paths to Readme files", 
     default="README.md"
 )
 args = parser.parse_args()
