@@ -11,7 +11,7 @@ parser.add_argument(
     nargs="+", 
     type=str, 
     help="Paths to the Readme files", 
-    default=["README.md"]
+    default="README.md"
 )
 args = parser.parse_args()
 
