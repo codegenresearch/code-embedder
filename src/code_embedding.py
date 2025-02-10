@@ -2,6 +2,8 @@ import re
 from dataclasses import dataclass
 
 from loguru import logger
+from src.script_metadata_extractor import ScriptMetadataExtractorInterface
+from src.script_content_reader import ScriptContentReaderInterface
 
 
 @dataclass
@@ -10,16 +12,6 @@ class ScriptMetadata:
     readme_end: int
     path: str
     content: str
-
-
-class ScriptMetadataExtractorInterface:
-    def extract(self, readme_content: list[str]) -> list[ScriptMetadata]:
-        raise NotImplementedError
-
-
-class ScriptContentReaderInterface:
-    def read(self, scripts: list[ScriptMetadata]) -> list[ScriptMetadata]:
-        raise NotImplementedError
 
 
 class ScriptMetadataExtractor(ScriptMetadataExtractorInterface):
@@ -134,11 +126,11 @@ class CodeEmbedder:
         readme_content_cursor = 0
 
         for script in sorted(script_contents, key=lambda x: x.readme_start):
-            updated_readme.extend(readme_content[readme_content_cursor : script.readme_start + 1])
-            updated_readme.append(script.content + "\n")
+            updated_readme += readme_content[readme_content_cursor : script.readme_start + 1]
+            updated_readme += script.content + "\n"
             readme_content_cursor = script.readme_end
 
-        updated_readme.extend(readme_content[readme_content_cursor:])
+        updated_readme += readme_content[readme_content_cursor:]
 
         with open(readme_path, "w") as readme_file:
             readme_file.writelines(updated_readme)
