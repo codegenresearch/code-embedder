@@ -1,7 +1,85 @@
-from src.code_embedding import CodeEmbedder
-from src.script_content_reader import ScriptContentReader
-from src.script_metadata_extractor import ScriptMetadataExtractor
+import pytest
 
+from src.code_embedding import CodeEmbedder, ScriptMetadata
+
+@pytest.mark.parametrize(
+    "readme_content, expected",
+    [
+        (
+            [":main.py", "print('Hello, World!')", ""],
+            [ScriptMetadata(0, 2, "main.py", "")],
+        ),
+        (["", "print('Hello, World!')", ""], []),
+        ([], []),
+        (["", "print('Hello, World!')", ""], []),
+        (
+            [
+                ":example.py",
+                "import os",
+                "print('Hello, World!')",
+                "",
+                "",
+                "print('Do not replace')",
+                "",
+            ],
+            [ScriptMetadata(0, 3, "example.py", "")],
+        ),
+        (
+            [
+                ":main.py",
+                "print('Hello, World!')",
+                "",
+                ":example.py",
+                "import os",
+                "print('Hello, World!')",
+                "",
+                "",
+                "print('Do not replace')",
+                "",
+            ],
+            [
+                ScriptMetadata(0, 2, "main.py", ""),
+                ScriptMetadata(3, 6, "example.py", ""),
+            ],
+        ),
+    ],
+    ids=[
+        "one_tagged_script",
+        "one_untagged_script",
+        "empty_readme",
+        "one_untagged_script_language_specified",
+        "one_tagged_script_one_untagged_script",
+        "two_tagged_scripts_one_untagged_script",
+    ],
+)
+def test_script_metadata_extractor(
+    readme_content: list[str], expected: list[ScriptMetadata]
+) -> None:
+    script_metadata_extractor = ScriptMetadataExtractor()
+    result = script_metadata_extractor.extract(readme_content=readme_content)
+    assert result == expected
+
+def test_code_embedder_read_script_content() -> None:
+    code_embedder = CodeEmbedder(
+        readme_paths=["tests/data/readme.md"],
+        script_metadata_extractor=ScriptMetadataExtractor(),
+    )
+
+    scripts = code_embedder._read_script_content(
+        scripts=[
+            ScriptMetadata(
+                readme_start=6, readme_end=7, path="tests/data/example.py", content=""
+            )
+        ]
+    )
+    assert scripts == [
+        ScriptMetadata(
+            readme_start=6,
+            readme_end=7,
+            path="tests/data/example.py",
+            content='print("Hello, World! from script")\n',
+        )
+    ]
 
 def test_code_embedder(tmp_path) -> None:
     original_paths = [
@@ -24,7 +102,6 @@ def test_code_embedder(tmp_path) -> None:
     code_embedder = CodeEmbedder(
         readme_paths=[str(temp_readme_path) for temp_readme_path in temp_readme_paths],
         script_metadata_extractor=ScriptMetadataExtractor(),
-        script_content_reader=ScriptContentReader(),
     )
 
     code_embedder()
